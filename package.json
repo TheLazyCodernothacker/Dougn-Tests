@@ -4,7 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon index.js"
+    "start:server": "nodemon index.js",
+    "build:css": "npx tailwindcss -i ./public/style.css -o ./public/output.css --watch",
+    "start": "npm-run-all --parallel start:server build:css"
   },
   "author": "",
   "license": "ISC",
@@ -15,5 +17,8 @@
     "socket.io-client": "^4.7.2",
     "uuid": "^9.0.1",
     "uuidv4": "^6.2.13"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.0"
   }
 }

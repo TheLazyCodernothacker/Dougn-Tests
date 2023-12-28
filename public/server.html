@@ -1,20 +1,23 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
-  <link rel="stylesheet" href="style.css">
-      <script src="/socket.io/socket.io.js" defernpm></script>
-  <script src="./script.js" defer></script>
-</head>
-<body>
-  <div id="games"></div>
-  <script defer>
-    document.addEventListener("DOMContentLoaded", () => {
-      getGames()
-    })
-  </script>
-</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <link rel="stylesheet" href="output.css" />
+    <script src="/socket.io/socket.io.js" defernpm></script>
+    <script src="./script.js" defer></script>
+  </head>
+  <body class="bg-black">
+    <div
+      id="games"
+      class="m-8 rouded p-8 grid grid-cols-3 bg-neutral-950 gap-4"
+    ></div>
+    <script defer>
+      document.addEventListener("DOMContentLoaded", () => {
+        getGames();
+      });
+    </script>
+  </body>
 </html>

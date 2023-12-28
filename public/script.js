@@ -2,7 +2,8 @@ const socket = io();
 
 // JavaScript
 function createGame() {
-  socket.emit("createGame");
+  const name = prompt("What name would you like to use?");
+  socket.emit("createGame", name);
   window.location = "server.html";
 }
 
@@ -195,15 +196,12 @@ function getGames() {
   socket.on("gamesData", (gamesData) => {
     gamesData.forEach((game) => {
       const gameElement = document.createElement("div");
-      const gameHeader = document.createElement("h1");
-      gameHeader.innerText = game.id;
-      const gameButton = document.createElement("button");
-      gameButton.innerText = "Join game";
-      gameButton.onclick = () => {
-        console.log("joining game");
-      };
-      gameElement.appendChild(gameHeader);
-      gameElement.appendChild(gameButton);
+      gameElement.setAttribute("class", "p-4 rounded bg-neutral-700");
+      gameElement.innerHTML = `
+      <h1 class="text-4xl">${game.name}</h3>
+      <p class="text-2xl mt-2">${game.players.length} players</p>
+      <button class="rounded bg-neutral-500 px-2 py-1 text-xl mt-4" onclick="joinGame('${game.id}')">Join</button>
+      `;
       games.appendChild(gameElement);
     });
   });
