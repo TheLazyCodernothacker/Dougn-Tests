@@ -76,7 +76,7 @@ io.on("connection", (socket) => {
     if (game) {
       let player = game.players.find((p) => p.id === playerId);
       socket.join(gameId);
-      socket.emit("game", game, playerId);
+      socket.emit("loadGame", game, playerId, player);
     }
   });
   socket.on("getGames", () => {
@@ -109,23 +109,6 @@ io.on("connection", (socket) => {
     console.log(playerCoords);
     player.coords = playerCoords;
     console.log(playerCoords, socket.id);
-    socket.emit("private-update", player);
-    io.emit("update", game);
-  });
-  socket.on("play", () => {
-    console.log("New client connected");
-    socket.emit("game", game, socket.id);
-    game.players.push(new Player(socket.id));
-    socket.on("coordinates", (coords) => {
-      let player = game.players.find((p) => p.id === socket.id);
-      player.coords = coords;
-      console.log(player.coords);
-      io.emit("update", game);
-    });
-    socket.on("disconnect", () => {
-      console.log("Client disconnected");
-      game.players = game.players.filter((p) => p.id !== socket.id);
-      io.emit("update", game);
-    });
+    io.to(game.id).emit("update", game);
   });
 });

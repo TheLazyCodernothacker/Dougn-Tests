@@ -20,6 +20,7 @@ if (createButton) {
 }
 
 function play() {
+  let game = {};
   const ctx = canvas.getContext("2d");
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
@@ -32,24 +33,29 @@ function play() {
     localStorage.getItem("playerId")
   );
 
-  socket.on("private-update", (data) => {
-    offset.x = data.x;
-    offset.y = data.y;
-  });
-
-  socket.on("game", (game, playerId) => {
+  socket.on("loadGame", (game, playerId, player) => {
     offset.x = game.offset.x;
     offset.y = game.offset.y;
-    startGame();
+    if (player.x) {
+      offset.x = player.x;
+      offset.y = player.y;
+    }
+    loadGame();
     opponents = game.players.filter((p) => p.id !== socket.id);
   });
 
   socket.on("update", (game) => {
+    let player = game.players.find(
+      (p) => p.id === localStorage.getItem("playerId")
+    );
+    if (!player) return alert("Something is off");
+    offset.x = player.x;
+    offset.y = player.y;
     opponents = game.players.filter((p) => p.id !== socket.id);
     console.log(opponents);
   });
 
-  function startGame() {
+  function loadGame() {
     const map = new Image();
     map.src = "Pellet Town.png";
 
@@ -101,8 +107,8 @@ function play() {
       constructor(x, y, image) {
         this.x = x;
         this.y = y;
-        this.width = 16;
-        this.height = 16;
+        this.width = 64;
+        this.height = 64;
         this.image = image;
       }
       draw() {
@@ -144,7 +150,7 @@ function play() {
       console.log(array);
       for (let i = 0; i < array.length; i++) {
         for (let j = 0; j < array[i].length; j++) {
-          tiles.push(new Tile(16 * j, 16 * i, array[i][j]));
+          tiles.push(new Tile(64 * j, 64 * i, array[i][j]));
         }
       }
     }
