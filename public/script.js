@@ -1,5 +1,11 @@
 const socket = io();
 
+socket.on("joinedGame", (gameId, playerId) => {
+  localStorage.setItem("gameId", gameId);
+  localStorage.setItem("playerId", playerId);
+  window.location = "game.html";
+});
+
 // JavaScript
 function createGame() {
   const name = prompt("What name would you like to use?");
@@ -20,7 +26,11 @@ function play() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
   const offset = {};
 
-  socket.emit("play");
+  socket.emit(
+    "playGame",
+    localStorage.getItem("gameId"),
+    localStorage.getItem("playerId")
+  );
 
   socket.on("private-update", (data) => {
     offset.x = data.x;
@@ -151,6 +161,8 @@ function play() {
         canvasHeight: canvas.height,
         playerWidth: player.width,
         playerHeight: player.height,
+        gameId: localStorage.getItem("gameId"),
+        playerId: localStorage.getItem("playerId"),
       };
       if (keys.up) socket.emit("move", "up", data);
       if (keys.down) socket.emit("move", "down", data);
@@ -198,10 +210,10 @@ function getGames() {
       const gameElement = document.createElement("div");
       gameElement.setAttribute("class", "p-4 rounded bg-neutral-700");
       gameElement.innerHTML = `
-      <h1 class="text-4xl">${game.name}</h3>
-      <p class="text-2xl mt-2">${game.players.length} players</p>
-      <button class="rounded bg-neutral-500 px-2 py-1 text-xl mt-4" onclick="joinGame('${game.id}')">Join</button>
-      `;
+  <h1 class="text-4xl">${game.name}</h1>
+  <p class="text-2xl mt-2">${game.players.length} players</p>
+  <button class="rounded bg-neutral-500 px-2 py-1 text-xl mt-4" onclick="socket.emit('joinGame', '${game.id}')">Join</button>
+`;
       games.appendChild(gameElement);
     });
   });

@@ -37,6 +37,7 @@ class Player {
 
 class Game {
   constructor(id, name) {
+    this.offset = { x: -545, y: -600 };
     this.id = id;
     this.name = name;
     this.players = [];
@@ -52,18 +53,64 @@ io.on("connection", (socket) => {
     games.push(new Game(uuidv4(), name));
     console.log(games);
   });
-  socket.on("joinGame", (gameId, playerId) => {
+  socket.on("joinGame", (gameId) => {
+    console.log(gameId, 1234);
     try {
-      const game = game.find((game) => game.id === gameId);
+      const game = games.find((game) => game.id === gameId);
       if (game) {
         game.players.push(new Player(socket.id));
+        console.log(game);
+        socket.emit("joinedGame", game.id, socket.id);
       }
-    } catch {
+    } catch (e) {
+      console.log(e);
       socket.emit("error");
+    }
+  });
+  socket.on("playGame", (gameId, playerId) => {
+    const game = games.find(
+      (game) =>
+        game.id === gameId && game.players.find((p) => p.id === playerId)
+    );
+
+    if (game) {
+      let player = game.players.find((p) => p.id === playerId);
+      socket.join(gameId);
+      socket.emit("game", game, playerId);
     }
   });
   socket.on("getGames", () => {
     socket.emit("gamesData", games);
+  });
+  socket.on("move", (dir, data) => {
+    console.log("move");
+    let game = games.find((game) => game.id === data.gameId);
+    if (!game) return;
+    let player = game.players.find((p) => p.id === data.playerId);
+    if (!player) return;
+    switch (dir) {
+      case "up":
+        player.y += 3;
+        break;
+      case "down":
+        player.y -= 3;
+        break;
+      case "left":
+        player.x += 3;
+        break;
+      case "right":
+        player.x -= 3;
+        break;
+    }
+    let playerCoords = {
+      x: -1 * player.x + data.canvasWidth / 2 - data.playerWidth / 8,
+      y: -1 * player.y + data.canvasHeight / 2 - data.playerHeight / 2,
+    };
+    console.log(playerCoords);
+    player.coords = playerCoords;
+    console.log(playerCoords, socket.id);
+    socket.emit("private-update", player);
+    io.emit("update", game);
   });
   socket.on("play", () => {
     console.log("New client connected");
@@ -78,32 +125,6 @@ io.on("connection", (socket) => {
     socket.on("disconnect", () => {
       console.log("Client disconnected");
       game.players = game.players.filter((p) => p.id !== socket.id);
-      io.emit("update", game);
-    });
-    socket.on("move", (dir, data) => {
-      let player = game.players.find((p) => p.id === socket.id);
-      switch (dir) {
-        case "up":
-          player.y += 3;
-          break;
-        case "down":
-          player.y -= 3;
-          break;
-        case "left":
-          player.x += 3;
-          break;
-        case "right":
-          player.x -= 3;
-          break;
-      }
-      let playerCoords = {
-        x: -1 * player.x + data.canvasWidth / 2 - data.playerWidth / 8,
-        y: -1 * player.y + data.canvasHeight / 2 - data.playerHeight / 2,
-      };
-      console.log(playerCoords);
-      player.coords = playerCoords;
-      console.log(playerCoords, socket.id);
-      socket.emit("private-update", player);
       io.emit("update", game);
     });
   });
