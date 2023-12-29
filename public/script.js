@@ -1,5 +1,9 @@
 const socket = io();
 
+socket.on("notwogames", () => {
+  alert("You are already in a game");
+});
+
 socket.on("joinedGame", (gameId, playerId) => {
   localStorage.setItem("gameId", gameId);
   localStorage.setItem("playerId", playerId);
@@ -216,10 +220,20 @@ function getGames() {
       const gameElement = document.createElement("div");
       gameElement.setAttribute("class", "p-4 rounded bg-neutral-700");
       gameElement.innerHTML = `
-  <h1 class="text-4xl">${game.name}</h1>
-  <p class="text-2xl mt-2">${game.players.length} players</p>
-  <button class="rounded bg-neutral-500 px-2 py-1 text-xl mt-4" onclick="socket.emit('joinGame', '${game.id}')">Join</button>
-`;
+        <h1 class="text-4xl">${game.name}</h1>
+        <p class="text-2xl mt-2">${game.players.length} players</p>
+        ${
+          game.players.find(
+            (player) => player.id === localStorage.getItem("playerId")
+          )
+            ? "<button class='rounded bg-neutral-500 px-2 py-1 text-xl mt-'4 onclick='window.location = \"game.html\"'> Continue</button>"
+            : `<button class="rounded bg-neutral-500 px-2 py-1 text-xl mt-4" onclick="socket.emit('joinGame', '${
+                game.id
+              }', '${localStorage.getItem("gameId")}', '${localStorage.getItem(
+                "playerId"
+              )}')">Join</button>`
+        }`;
+
       games.appendChild(gameElement);
     });
   });

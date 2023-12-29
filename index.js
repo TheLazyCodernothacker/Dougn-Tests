@@ -53,10 +53,18 @@ io.on("connection", (socket) => {
     games.push(new Game(uuidv4(), name));
     console.log(games);
   });
-  socket.on("joinGame", (gameId) => {
-    console.log(gameId, 1234);
+  socket.on("joinGame", (gameId, userGameId, playerId) => {
     try {
       const game = games.find((game) => game.id === gameId);
+      let otherGame = games.find((game) => game.id === userGameId);
+      if (otherGame) {
+        otherPlayer = otherGame.players.find((p) => p.id === playerId);
+        if (otherPlayer) {
+          console.log(otherPlayer, 1234);
+          socket.emit("notwogames");
+          return;
+        }
+      }
       if (game) {
         game.players.push(new Player(socket.id));
         console.log(game);
