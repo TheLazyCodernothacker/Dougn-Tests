@@ -75,7 +75,7 @@ io.on("connection", (socket) => {
       socket.emit("error");
     }
   });
-  socket.on("playGame", (gameId, playerId) => {
+  socket.on("playGame", (gameId, playerId, canvasWidth, canvasHeight) => {
     const game = games.find(
       (game) =>
         game.id === gameId && game.players.find((p) => p.id === playerId)
@@ -83,6 +83,12 @@ io.on("connection", (socket) => {
 
     if (game) {
       let player = game.players.find((p) => p.id === playerId);
+      console.log(player);
+      let playerCoords = {
+        x: -1 * player.x + canvasWidth / 2 - 196 / 8,
+        y: -1 * player.y + canvasHeight / 2 - 68 / 2,
+      };
+      player.coords = playerCoords;
       socket.join(gameId);
       socket.emit("loadGame", game, playerId, player);
     }
@@ -114,6 +120,7 @@ io.on("connection", (socket) => {
       y: -1 * player.y + data.canvasHeight / 2 - data.playerHeight / 2,
     };
     player.coords = playerCoords;
+    console.log(player);
     io.to(game.id).emit("update", game);
   });
 });
