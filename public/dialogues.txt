@@ -1,0 +1,2 @@
+Merchant
+Hello adventurer, you can buy stuff from me using gold

@@ -91,7 +91,6 @@ io.on("connection", (socket) => {
     socket.emit("gamesData", games);
   });
   socket.on("move", (dir, data) => {
-    console.log("move");
     let game = games.find((game) => game.id === data.gameId);
     if (!game) return;
     let player = game.players.find((p) => p.id === data.playerId);
@@ -114,9 +113,7 @@ io.on("connection", (socket) => {
       x: -1 * player.x + data.canvasWidth / 2 - data.playerWidth / 8,
       y: -1 * player.y + data.canvasHeight / 2 - data.playerHeight / 2,
     };
-    console.log(playerCoords);
     player.coords = playerCoords;
-    console.log(playerCoords, socket.id);
     io.to(game.id).emit("update", game);
   });
 });

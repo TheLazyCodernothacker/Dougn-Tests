@@ -9,11 +9,8 @@
     <script src="/socket.io/socket.io.js" defernpm></script>
     <script src="./script.js" defer></script>
   </head>
-  <body class="bg-black">
-    <div
-      id="games"
-      class="m-8 rouded p-8 grid grid-cols-3 bg-neutral-950 gap-4"
-    ></div>
+  <body class="bg-image">
+    <div id="games" class="m-8 rouded p-8 grid grid-cols-3 gap-4"></div>
     <script defer>
       document.addEventListener("DOMContentLoaded", () => {
         getGames();

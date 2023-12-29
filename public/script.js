@@ -56,13 +56,13 @@ function play() {
     offset.x = player.x;
     offset.y = player.y;
     opponents = game.players.filter((p) => p.id !== socket.id);
-    console.log(opponents);
   });
 
   function loadGame() {
     const map = new Image();
     map.src = "Pellet Town.png";
-
+    const tileset = new Image();
+    tileset.src = "assets/tiles.png";
     const player = new Image();
     player.src = "playerDown.png";
 
@@ -108,27 +108,39 @@ function play() {
     });
 
     class Tile {
-      constructor(x, y, image) {
+      constructor(x, y, sx, sy) {
         this.x = x;
         this.y = y;
+        this.sx = sx;
+        this.sy = sy;
         this.width = 64;
         this.height = 64;
-        this.image = image;
       }
       draw() {
         ctx.drawImage(
-          this.image,
-          this.x + offset.x,
-          this.y + offset.y,
-          this.width,
-          this.height
+          tileset,
+          this.sx * 16, // source x
+          this.sy * 16, // source y
+          16,
+          16,
+          this.x + offset.x, // destination x
+          this.y + offset.y, // destination y
+          this.width, // destination width
+          this.height // destination height
         );
       }
     }
 
-    const SpiralEyeChiseledStone = new Image();
-    SpiralEyeChiseledStone.src = "./assets/Textures/SpiralEyeChiseledStone.png";
-    const test = new Tile(0, 0, SpiralEyeChiseledStone);
+    const SECS = new Image();
+    SECS.src = "./assets/Textures/SpiralEyeChiseledStone.png";
+    const CSB = new Image();
+    CSB.src = "./assets/Textures/CrackedStoneBricks.png";
+    const ECS = new Image();
+    ECS.src = "./assets/Textures/EyeChiseledStone.png";
+    const SB = new Image();
+    SB.src = "./assets/Textures/StoneBricks.png";
+    const MSB = new Image();
+    MSB.src = "./assets/Textures/MossyStoneBricks.png";
 
     window.addEventListener("keyup", (e) => {
       switch (e.key) {
@@ -151,17 +163,40 @@ function play() {
       }
     });
     function readArray(array) {
-      console.log(array);
+      array = array.filter((a) => a !== 0);
       for (let i = 0; i < array.length; i++) {
-        for (let j = 0; j < array[i].length; j++) {
-          tiles.push(new Tile(64 * j, 64 * i, array[i][j]));
-        }
+        let x = (array[i] - 1) % 10;
+        let y = Math.floor((array[i] - 1) / 10);
+        tiles.push(new Tile(64 * (i % 16), 64 * Math.floor(i / 16), x, y));
       }
+      console.log(tiles);
     }
     const tiles = [];
     readArray([
-      [SpiralEyeChiseledStone],
-      [SpiralEyeChiseledStone, SpiralEyeChiseledStone],
+      1, 2, 3, 2, 3, 2, 3, 2, 3, 16, 12, 12, 12, 12, 12, 12, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12,
+      12, 12, 12, 12, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 12,
+      12, 12, 12, 12, 12, 12, 12, 16, 12, 12, 12, 12, 12, 12, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 11, 12, 12, 12, 12, 12, 12, 12, 12, 3, 3, 3,
+      3, 3, 3, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 12, 12, 12,
+      12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 11, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+      12, 12, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 12, 12, 12,
+      12, 12, 12, 12, 12, 51, 12, 12, 12, 12, 12, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 11, 12, 12, 12, 12, 12, 12, 12, 12, 16, 12, 12, 12,
+      12, 12, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 12, 12, 12,
+      12, 12, 12, 12, 12, 16, 12, 12, 12, 12, 12, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 41, 42, 42, 42, 42, 42, 42, 42, 42, 16, 12, 12, 12,
+      12, 12, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 12, 12, 12,
+      12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+      12, 12, 6, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 12, 12, 12,
+      12, 12, 12, 12, 42, 42, 42, 42, 42, 42, 42, 46, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+      12, 12, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 12, 12,
+      12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 0, 0, 0, 0, 0, 0, 0,
+      0, 0, 0, 0, 0, 0, 0, 0, 0, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
+      12, 12, 12, 12, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     ]);
     console.log(tiles);
     function animate() {
@@ -178,7 +213,6 @@ function play() {
       if (keys.down) socket.emit("move", "down", data);
       if (keys.left) socket.emit("move", "left", data);
       if (keys.right) socket.emit("move", "right", data);
-      ctx.drawImage(map, offset.x, offset.y, map.width, map.height);
       tiles.forEach((tile) => tile.draw());
       if (typeof opponents !== "undefined") {
         opponents.forEach((opponent) => {
