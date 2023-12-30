@@ -12,7 +12,7 @@ main {
 .bg-image {
   background-size: cover;
   background-repeat: no-repeat;
-  background-image: url("/assets/server.jpg");
+  background-image: url("https://img.freepik.com/premium-vector/dungeon-with-long-corridor-with-ladder-steps-up-medieval-castle-corridor-with-torches-doors_273525-1097.jpg?size=626&ext=jpg&ga=GA1.1.1546980028.1703548800&semt=ais");
 }
 
 .container {

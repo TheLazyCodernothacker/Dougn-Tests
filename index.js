@@ -85,7 +85,7 @@ io.on("connection", (socket) => {
       let player = game.players.find((p) => p.id === playerId);
       console.log(player);
       let playerCoords = {
-        x: -1 * player.x + canvasWidth / 2 - 196 / 8,
+        x: -1 * player.x + canvasWidth / 2 - 192 / 8,
         y: -1 * player.y + canvasHeight / 2 - 68 / 2,
       };
       player.coords = playerCoords;
