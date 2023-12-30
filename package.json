@@ -8,6 +8,9 @@
     "build:css": "npx tailwindcss -i ./public/style.css -o ./public/output.css --watch",
     "start": "npm-run-all --parallel start:server build:css"
   },
+  "engines": {
+    "node": "18.x"
+  },
   "author": "",
   "license": "ISC",
   "dependencies": {
