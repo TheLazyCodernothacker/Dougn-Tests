@@ -9,7 +9,7 @@
     "start": "npm-run-all --parallel start:server build:css"
   },
   "engines": {
-    "node": "18.x"
+    "node": "16.x"
   },
   "author": "",
   "license": "ISC",
