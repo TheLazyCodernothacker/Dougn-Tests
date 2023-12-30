@@ -297,28 +297,16 @@ function play() {
         gameId: localStorage.getItem("gameId"),
         playerId: localStorage.getItem("playerId"),
       };
-      if (
-        keys.up &&
-        !checkCollision({ ...playerData.coords, y: playerData.coords.y - 3 })
-      ) {
+      if (keys.up) {
         socket.emit("move", "up", data);
       }
-      if (
-        keys.down &&
-        !checkCollision({ ...playerData.coords, y: playerData.coords.y + 3 })
-      ) {
+      if (keys.down) {
         socket.emit("move", "down", data);
       }
-      if (
-        keys.left &&
-        !checkCollision({ ...playerData.coords, x: playerData.coords.x - 3 })
-      ) {
+      if (keys.left) {
         socket.emit("move", "left", data);
       }
-      if (
-        keys.right &&
-        !checkCollision({ ...playerData.coords, x: playerData.coords.x + 3 })
-      ) {
+      if (keys.right) {
         socket.emit("move", "right", data);
       }
       tiles.forEach((tile) => tile.draw());
