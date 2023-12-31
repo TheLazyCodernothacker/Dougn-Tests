@@ -55,6 +55,7 @@ function play() {
   });
 
   socket.on("update", (game) => {
+    console.log("updated", game.players);
     let player = game.players.find(
       (p) => p.id === localStorage.getItem("playerId")
     );
@@ -290,7 +291,6 @@ function play() {
           (playerFrame % 4) + 1
         }.png`;
       }
-      console.log((playerFrame % 4) + 1);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       let data = {
         canvasWidth: canvas.width,

@@ -36,7 +36,6 @@ class Player {
 }
 
 function checkCollision(coords, tiles, player) {
-  console.log(player.width, player.height);
   let collision = tiles.find((tile) => {
     if (tile.collision) {
       if (
@@ -177,7 +176,6 @@ io.on("connection", (socket) => {
       socket.emit("sameName");
     }
     games.push(new Game(uuidv4(), name));
-    console.log(games);
   });
   socket.on("joinGame", (gameId, userGameId, playerId) => {
     try {
@@ -186,14 +184,12 @@ io.on("connection", (socket) => {
       if (otherGame) {
         otherPlayer = otherGame.players.find((p) => p.id === playerId);
         if (otherPlayer) {
-          console.log(otherPlayer, 1234);
           socket.emit("notwogames");
           return;
         }
       }
       if (game) {
         game.players.push(new Player(socket.id));
-        console.log(game);
         socket.emit("joinedGame", game.id, socket.id);
       }
     } catch (e) {
@@ -209,7 +205,6 @@ io.on("connection", (socket) => {
 
     if (game) {
       let player = game.players.find((p) => p.id === playerId);
-      console.log(player);
       let playerCoords = {
         x: -1 * player.x + canvasWidth / 2 - 64 / 2,
         y: -1 * player.y + canvasHeight / 2 - 64 / 2,
@@ -268,11 +263,32 @@ io.on("connection", (socket) => {
           player.x += 3;
           break;
       }
-      console.log("collision");
       return;
     }
     player.coords = playerCoords;
-    console.log("updating for everyone");
     io.to(game.id).emit("update", game);
   });
 });
+
+setInterval(() => {
+  stuffs();
+}, 1000 / 60);
+
+function stuffs() {
+  games.forEach((game) => {
+    // if (game.players.find((a) => a.id == "bot") == undefined) {
+    //   console.log("pushing");
+    //   let bot = new Player("bot", "bot");
+    //   bot.coords.x = 500;
+    //   bot.coords.y = 500;
+    //   game.players.push(bot);
+    // } else {
+    //   let bot = game.players.find((a) => a.id == "bot");
+    //   if (bot) {
+    //     bot.coords.x += 1;
+    //   }
+    //   io.to(game.id).emit("update", game);
+    // }
+    //example of stuff you can do every frame
+  });
+}
