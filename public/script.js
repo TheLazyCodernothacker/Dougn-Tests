@@ -26,6 +26,7 @@ if (createButton) {
 function play() {
   let game = {};
   const ctx = canvas.getContext("2d");
+  ctx.imageSmoothingEnabled = false;
   canvas.width = window.innerWidth;
   canvas.height = window.innerHeight;
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -47,7 +48,10 @@ function play() {
       offset.y = player.y;
     }
     loadGame(player.coords.x, player.coords.y);
-    opponents = game.players.filter((p) => p.id !== socket.id);
+
+    opponents = game.players.filter(
+      (p) => p.id !== localStorage.getItem("playerId")
+    );
   });
 
   socket.on("update", (game) => {
@@ -58,7 +62,9 @@ function play() {
     offset.x = player.x;
     offset.y = player.y;
     playerData.coords = player.coords;
-    opponents = game.players.filter((p) => p.id !== socket.id);
+    opponents = game.players.filter(
+      (p) => p.id !== localStorage.getItem("playerId")
+    );
   });
 
   function loadGame(x, y) {
@@ -70,21 +76,8 @@ function play() {
     const tileset = new Image();
     tileset.src = "assets/tiles.png";
     const player = new Image();
-    player.src = "playerDown.png";
-
-    player.onload = () => {
-      ctx.drawImage(
-        player,
-        0,
-        0,
-        48,
-        64,
-        canvas.width / 2 - player.width / 8,
-        canvas.height / 2 - player.height / 2,
-        player.width / 4,
-        player.height
-      );
-    };
+    player.src =
+      "assets/Character_animation/priests_idle/priest1/v1/priest1_v1_1.png";
     const keys = {
       up: false,
       down: false,
@@ -287,7 +280,17 @@ function play() {
       42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 42, 46,
     ]);
     console.log(tiles);
+    let frames = 0;
+    let playerFrame = 0;
     function animate() {
+      frames += 1;
+      playerFrame += 1;
+      if (frames % 10 === 0) {
+        player.src = `assets/Character_animation/priests_idle/priest1/v1/priest1_v1_${
+          (playerFrame % 4) + 1
+        }.png`;
+      }
+      console.log((playerFrame % 4) + 1);
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       let data = {
         canvasWidth: canvas.width,
@@ -310,18 +313,18 @@ function play() {
         socket.emit("move", "right", data);
       }
       tiles.forEach((tile) => tile.draw());
-      if (typeof opponents !== "undefined") {
+      if (typeof opponents !== "undefined" && opponents.length > 0) {
         opponents.forEach((opponent) => {
           ctx.drawImage(
             player,
             0,
             0,
-            48,
-            64,
+            16,
+            16,
             opponent.coords.x + offset.x,
             opponent.coords.y + offset.y,
-            player.width / 4,
-            player.height
+            64,
+            64
           );
         });
       }
@@ -329,12 +332,12 @@ function play() {
         player,
         0,
         0,
-        48,
-        64,
+        16,
+        16,
         canvas.width / 2 - player.width / 8,
         canvas.height / 2 - player.height / 2,
-        player.width / 4,
-        player.height
+        64,
+        64
       );
       requestAnimationFrame(animate);
     }

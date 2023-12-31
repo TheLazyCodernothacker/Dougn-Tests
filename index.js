@@ -36,11 +36,12 @@ class Player {
 }
 
 function checkCollision(coords, tiles, player) {
+  console.log(player.width, player.height);
   let collision = tiles.find((tile) => {
     if (tile.collision) {
       if (
         tile.x + 64 > coords.x &&
-        tile.x < coords.x + player.width / 4 &&
+        tile.x < coords.x + player.width &&
         tile.y + 64 > coords.y &&
         tile.y < coords.y + player.height
       ) {
@@ -210,8 +211,8 @@ io.on("connection", (socket) => {
       let player = game.players.find((p) => p.id === playerId);
       console.log(player);
       let playerCoords = {
-        x: -1 * player.x + canvasWidth / 2 - 192 / 8,
-        y: -1 * player.y + canvasHeight / 2 - 68 / 2,
+        x: -1 * player.x + canvasWidth / 2 - 64 / 2,
+        y: -1 * player.y + canvasHeight / 2 - 64 / 2,
       };
       player.coords = playerCoords;
       socket.join(gameId);
@@ -246,8 +247,8 @@ io.on("connection", (socket) => {
       y: -1 * player.y + data.canvasHeight / 2 - data.playerHeight / 2,
     };
     let playerData = {
-      width: 192,
-      height: 68,
+      width: 64,
+      height: 64,
       x: playerCoords.x,
       y: playerCoords.y,
     };
